@@ -1,0 +1,8 @@
+./hmm-speech-recognition-0.1/audio_test/pineapple/pineapple15.wav
+./hmm-speech-recognition-0.1/audio_test/orange/orange15.wav
+./hmm-speech-recognition-0.1/audio_test/apple/apple15.wav
+./hmm-speech-recognition-0.1/audio_test/kiwi/kiwi15.wav
+./hmm-speech-recognition-0.1/audio_test/banana/banana15.wav
+./hmm-speech-recognition-0.1/audio_test/lime/lime15.wav
+./hmm-speech-recognition-0.1/audio_test/peach/peach15.wav
+./hmm-speech-recognition-0.1/audio_test/peach/peach15.wav
