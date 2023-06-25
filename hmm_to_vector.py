@@ -9,21 +9,25 @@ import json
 
 from librosa.feature import mfcc
 from hmm_acoustic import HMMTrainer
+from scipy.stats import multivariate_normal
 
 hyperparam = {
 	'items_file' : 'items.txt' 
 }
 
-def coef_state(phi, B, k):
+def coef_state(phi, B, feature):
 	"""
 	  phi: Stationnary distribution of an HMM λ
-	  B :  Matrix de transition
-	  k : indice of observed symbol
+	  B : Means and covariance for each state
+	  feautre : observed symbol
 	output: estimates the overall proportion of time spent by λ  at observing symbol vk over a long time span
 	"""
 	w = 0
+	means, covars = B
 	for i in range(len(phi)):
-		w = w+ phi[i]*B[k,i]
+		var = multivariate_normal(mean=means[i], cov=covars[i])
+        
+		w = w+ phi[i]*var.pdf(feature)
 	
 	return w
 
@@ -41,11 +45,14 @@ def hmm_to_vector(hmm, features):
 	phi = hmm.get_stationary_distribution()
 
 	nb_symbols = features.shape[0] # number of symbols
-	B = hmm.predict_proba(features)
+	#B = hmm.predict_proba(features)
+    #compute multivariate normal distribution over features
+	B = hmm.means_ , hmm.covars_
 	
+
 	w = [] # vector representation of HMM
-	for i in range(nb_symbols):
-		w.append(coef_state(phi, B, i)) 
+	for k in range(nb_symbols):
+		w.append(coef_state(phi, B, features[k])) 
 	
 	return w
 

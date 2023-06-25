@@ -21,7 +21,7 @@ with open(test_file) as mon_fichier:
 
 y_train = list(data_train.keys())
 X_train = list(data_train.values())
-
+print('shape:', len(X_train[1]))
 y_test = list(data_test.keys())
 X_test = list(data_test.values())
 
