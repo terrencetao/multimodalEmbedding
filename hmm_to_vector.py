@@ -10,10 +10,27 @@ import json
 from librosa.feature import mfcc
 from hmm_acoustic import HMMTrainer
 from scipy.stats import multivariate_normal
+from sklearn.mixture import GaussianMixture
 
 hyperparam = {
 	'items_file' : 'items.txt' 
 }
+
+def gmf(means,covars, weights , X):
+	"""
+	   inputs:
+	     means: vector (n_features)
+	     covars: matrix (n_feaures)
+	     weights: vecteur (n_mix)
+	        X : feature
+	   output: vraissamblance de X
+	"""
+	p=0
+	for i in range(len(weights)):
+		mvn = multivariate_normal(mean= means[i], cov=covars[i])
+		p = p + weights[i]*mvn.pdf(X) 
+
+	return p
 
 def coef_state(phi, B, feature):
 	"""
@@ -23,11 +40,10 @@ def coef_state(phi, B, feature):
 	output: estimates the overall proportion of time spent by λ  at observing symbol vk over a long time span
 	"""
 	w = 0
-	means, covars = B
+	means, covars, weights = B
 	for i in range(len(phi)):
-		var = multivariate_normal(mean=means[i], cov=covars[i])
-        
-		w = w+ phi[i]*var.pdf(feature)
+		
+		w = w+ phi[i]*gmf(means[i],covars[i],weights[i],feature) # gmm.score need 2D(sample,feature) dimension as parameter and return an array
 	
 	return w
 
@@ -47,7 +63,7 @@ def hmm_to_vector(hmm, features):
 	nb_symbols = features.shape[0] # number of symbols
 	#B = hmm.predict_proba(features)
     #compute multivariate normal distribution over features
-	B = hmm.means_ , hmm.covars_
+	B = hmm.means_ , hmm.covars_, hmm.weights_
 	
 
 	w = [] # vector representation of HMM
