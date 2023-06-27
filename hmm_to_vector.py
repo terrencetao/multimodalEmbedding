@@ -141,11 +141,17 @@ if __name__ == "__main__":
 
 		mfcc_features=mfcc_features[:,:15]
 		# Get acoustic vector
-		vector=acoutic_vectors(input_file, hmm_models)
-
+		vector_get = True
+		try:
+			vector=acoutic_vectors(input_file, hmm_models)
+		except:
+			vector_get=False
+	       
+	
 		#  the name for the vector is item/item.wav this is for easier dataset contruction for ASR model svm
-		ifi =input_file.split('/')
-		mat_vectors[os.path.join(ifi[3],ifi[4])]= vector
+		if vector_get:
+			ifi =input_file.split('/')
+			mat_vectors[os.path.join(ifi[2],ifi[3])]= vector
 	
 	# Serialization
 	with open(output_file, "w") as outfile:

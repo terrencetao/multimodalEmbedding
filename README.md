@@ -2,7 +2,7 @@
 
 1- Build HMM for each word
 
-   `python hmm_acoustic.py`
+   `python hmm_acoustic.py --input_folder dataset/train`
    
    NB:
 2- Transform HMM to vectors

@@ -5,6 +5,8 @@ import numpy as np
 from scipy.io import wavfile 
 from hmmlearn import hmm
 import librosa
+import argparse 
+import tqdm as tqdm
 
 from librosa.feature import mfcc
 
@@ -42,7 +44,11 @@ class HMMTrainer(object):
 
 if __name__ == "__main__":
 
-    input_folder = hyperams['input_folder'] 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input_folder', help ='source folder')
+    args = parser.parse_args()
+    
+    input_folder = args.input_folder
 
     for dirname in os.listdir(input_folder):
         # Get the name of the subfolder 
@@ -67,7 +73,11 @@ if __name__ == "__main__":
             if len(X) == 0:
                 X = mfcc_features[:,:15]
             else:
-                X = np.append(X, mfcc_features[:,:15], axis=0)            
+                try :
+                    X = np.append(X, mfcc_features[:,:15], axis=0)
+                except:
+                    pass
+
             y_words.append(label)
             filepaths.append(filepath)
         print('X.shape =', X.shape)

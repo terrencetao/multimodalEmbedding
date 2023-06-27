@@ -2,7 +2,8 @@ from sklearn import svm
 import argparse 
 import json
 from sklearn import preprocessing
-
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--train_file', help ='audio\'s vector for training')
@@ -32,16 +33,21 @@ Yt = []
 for y in y_test:
 	Yt.append(y.split('/')[0])
 
-# le = preprocessing.LabelEncoder()
-# Y_train = le.fit(Y)
+le = preprocessing.LabelEncoder()
+le.fit(Yt)
+y_true = le.transform(Yt)
 
 
 clf = clf = svm.SVC()
 clf.fit(X_train, Y)
 
 y_pred = clf.predict(X_test)
-print(y_pred)
-print(Yt)
+y_view = le.transform(y_pred)
+# print(y_view)
+# print(Yt)
+print(classification_report(y_true, y_view, target_names=le.classes_))
+print(accuracy_score(y_true, y_pred))
+
 
 
 
