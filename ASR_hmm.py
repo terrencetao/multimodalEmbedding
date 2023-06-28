@@ -4,6 +4,8 @@ import json
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
+from sklearn.metrics import precision_score
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--train_file', help ='audio\'s vector for training')
@@ -46,7 +48,8 @@ y_view = le.transform(y_pred)
 # print(y_view)
 # print(Yt)
 print(classification_report(y_true, y_view, target_names=le.classes_))
-print(accuracy_score(y_true, y_pred))
+print(accuracy_score(y_true, y_view))
+print(precision_score(y_true=y_true, y_pred=y_view,average='macro'))
 
 
 

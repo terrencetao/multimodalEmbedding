@@ -87,7 +87,7 @@ def acoutic_vectors(input_file, models):
 
 	        # Extract MFCC features
 	mfcc_features = mfcc(sampling_freq, audio)
-	mfcc_features=mfcc_features[:,:10]
+	mfcc_features=mfcc_features[:,:5]
 
             # transform input to vector
 	scores = []

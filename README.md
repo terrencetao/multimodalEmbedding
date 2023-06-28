@@ -17,3 +17,6 @@
 3- Use these vectors to train svm
 
    `python ASR_hmm.py --train_file acoustic_vetors_train.json --test_file  acoustic_vetors_test.json`
+4- Train an svm on mfcc vectors
+
+   `python ASR_mfcc.py --train_folder dataset/train --test_file  audio_test_file.txt`

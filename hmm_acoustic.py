@@ -18,7 +18,7 @@ hyperams ={
 }
 
 class HMMTrainer(object):
-    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 1, cov_type='diag', n_iter=1000):
+    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 3, cov_type='diag', n_iter=1000):
         self.model_name = model_name
         self.n_components = n_components
         self.cov_type = cov_type
@@ -40,6 +40,9 @@ class HMMTrainer(object):
     # Run the model on input data
     def get_score(self, input_data):
         return self.model.score(input_data)
+
+
+
 
 
 if __name__ == "__main__":
@@ -71,7 +74,7 @@ if __name__ == "__main__":
             filepath = os.path.join(subfolder, filename)
             sampling_freq, audio = librosa.load(filepath)            
             mfcc_features = mfcc(sampling_freq, audio)
-            mfcc_features =mfcc_features[:,:10]
+            mfcc_features =mfcc_features[:,:5]
             if len(X) == 0:
                 X = mfcc_features
                 length.append(len(mfcc_features))
