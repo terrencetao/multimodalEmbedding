@@ -9,7 +9,7 @@ import argparse
 import tqdm as tqdm
 
 from librosa.feature import mfcc
-
+import tensorlfow as tf
 
 hyperams ={
 	
@@ -66,27 +66,23 @@ if __name__ == "__main__":
         if not os.path.isdir(subfolder): 
             continue
         label = subfolder[subfolder.rfind('/') + 1:]
-        X = np.array([])
+        #X = np.array([])
         y_words = []
         length = []
-        
+        X=[]
         for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')][:-1]:
             filepath = os.path.join(subfolder, filename)
             sampling_freq, audio = librosa.load(filepath)            
             mfcc_features = mfcc(sampling_freq, audio)
-            mfcc_features =mfcc_features[:,:5]
-            if len(X) == 0:
-                X = mfcc_features
-                length.append(len(mfcc_features))
-            else:
-                try :
-                    X = np.append(X, mfcc_features, axis=0)
-                    length.append(len(mfcc_features))
-                except:
-                    pass
+            mfcc_features =mfcc_features.flatten()
+
+            X.append(mfcc_features)
+            length.append(len(mfcc_features))
+        
 
             y_words.append(label)
             filepaths.append(filepath)
+        X=tf.keras.preprocessing.sequence.pad_sequences(X, padding = 'post')
         print('X.shape =', X.shape)
         hmm_trainer = HMMTrainer()
         hmm_trainer.train(X,length)
