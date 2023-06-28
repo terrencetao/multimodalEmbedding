@@ -16,4 +16,4 @@
    
 3- Use these vectors to train svm
 
-   `python ASR.py --train_file acoustic_vetors_train.json --test_file  acoustic_vetors_test.json`
+   `python ASR_hmm.py --train_file acoustic_vetors_train.json --test_file  acoustic_vetors_test.json`

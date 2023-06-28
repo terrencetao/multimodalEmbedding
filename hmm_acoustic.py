@@ -18,7 +18,7 @@ hyperams ={
 }
 
 class HMMTrainer(object):
-    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 3, cov_type='diag', n_iter=1000):
+    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 1, cov_type='diag', n_iter=1000):
         self.model_name = model_name
         self.n_components = n_components
         self.cov_type = cov_type
@@ -33,9 +33,9 @@ class HMMTrainer(object):
             raise TypeError('Invalid model type')
 
     # X is a 2D numpy array where each row is 13D
-    def train(self, X):
+    def train(self, X, length=None):
         np.seterr(all='ignore')
-        self.models.append(self.model.fit(X))
+        self.models.append(self.model.fit(X,length))
 
     # Run the model on input data
     def get_score(self, input_data):
@@ -65,16 +65,20 @@ if __name__ == "__main__":
         label = subfolder[subfolder.rfind('/') + 1:]
         X = np.array([])
         y_words = []
+        length = []
         
         for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')][:-1]:
             filepath = os.path.join(subfolder, filename)
             sampling_freq, audio = librosa.load(filepath)            
             mfcc_features = mfcc(sampling_freq, audio)
+            mfcc_features =mfcc_features[:,:10]
             if len(X) == 0:
-                X = mfcc_features[:,:15]
+                X = mfcc_features
+                length.append(len(mfcc_features))
             else:
                 try :
-                    X = np.append(X, mfcc_features[:,:15], axis=0)
+                    X = np.append(X, mfcc_features, axis=0)
+                    length.append(len(mfcc_features))
                 except:
                     pass
 
@@ -82,7 +86,7 @@ if __name__ == "__main__":
             filepaths.append(filepath)
         print('X.shape =', X.shape)
         hmm_trainer = HMMTrainer()
-        hmm_trainer.train(X)
+        hmm_trainer.train(X,length)
         hmm_models.append((hmm_trainer, label))
         
 
