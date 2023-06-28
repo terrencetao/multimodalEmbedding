@@ -135,11 +135,6 @@ if __name__ == "__main__":
 	mat_vectors={}
 
 	for input_file in input_files:
-		sampling_freq, audio = librosa.load(input_file)
-
-		mfcc_features = mfcc(sampling_freq, audio)
-
-		mfcc_features=mfcc_features[:,:15]
 		# Get acoustic vector
 		vector=acoutic_vectors(input_file, hmm_models)
 
