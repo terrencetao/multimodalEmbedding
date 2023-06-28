@@ -27,7 +27,7 @@ def gmf(means,covars, weights , X):
 	"""
 	p=0
 	for i in range(len(weights)):
-		mvn = multivariate_normal(mean= means[i], cov=covars[i])
+		mvn = multivariate_normal(mean= means[i], cov=covars[i], allow_singular=True)
 		p = p + weights[i]*mvn.pdf(X) 
 
 	return p
