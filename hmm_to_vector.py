@@ -11,7 +11,7 @@ from librosa.feature import mfcc
 from hmm_acoustic import HMMTrainer
 from scipy.stats import multivariate_normal
 from sklearn.mixture import GaussianMixture
-
+from hmm_acoustic import padding
 hyperparam = {
 	'items_file' : 'items.txt' 
 }
@@ -72,7 +72,7 @@ def hmm_to_vector(hmm, features):
 	
 	return w
 
-def acoutic_vectors(input_file, models):
+def acoutic_vectors(input_file, models, size_max):
 	"""
 	   inputs:
 	        input_files : audio file
@@ -87,13 +87,18 @@ def acoutic_vectors(input_file, models):
 
 	        # Extract MFCC features
 	mfcc_features = mfcc(sampling_freq, audio)
-	mfcc_features=mfcc_features[:,:5]
-
+	#mfcc_features = padding(mfcc_features,max = size_max)
+	mfcc_features = mfcc_features.flatten()
+	mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)[:size_max]
             # transform input to vector
 	scores = []
 	for item in models:
 		hmm_model, label = item
-		score = hmm_model.get_score(mfcc_features)
+		try:
+			score = hmm_model.get_score(mfcc_features)
+			
+		except:
+			continue
 		scores.append(score)
 	index=np.array(scores).argmax()
 	
@@ -105,10 +110,12 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--input_file', help ='file containing a list of path to audio')
 	parser.add_argument('--output_file', help = 'file to write vectors')
+	parser.add_argument('--size_max', help ='size of each feauture in MFCC')
 	args = parser.parse_args()
 
 	input_file = args.input_file
 	output_file = args.output_file
+	size_max = int(args.size_max)
 
 	with open(input_file, 'r') as f:         # load items
 		files = f.readlines()
@@ -137,7 +144,7 @@ if __name__ == "__main__":
 	for input_file in input_files:
 		
 		# Get acoustic vector
-		vector=acoutic_vectors(input_file, hmm_models)
+		vector=acoutic_vectors(input_file, hmm_models, size_max)
 		
 	       
 	

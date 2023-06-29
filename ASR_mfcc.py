@@ -25,12 +25,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_folder', help ='folder for training')
     parser.add_argument('--test_file', help ='file containing a list of path to audio test')
+    parser.add_argument('--size_feautres', help ='size of each feauture in MFCC')
     args = parser.parse_args()
 
     test_file = args.test_file
 
     input_folder = args.train_folder
-
+    #size_max = args.size_features
     # for dirname in os.listdir(input_folder):
     #     # Get the name of the subfolder 
     #   subfolder = os.path.join(input_folder, dirname)

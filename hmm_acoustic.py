@@ -9,7 +9,7 @@ import argparse
 import tqdm as tqdm
 
 from librosa.feature import mfcc
-import tensorlfow as tf
+import tensorflow as tf
 
 hyperams ={
 	
@@ -41,7 +41,12 @@ class HMMTrainer(object):
     def get_score(self, input_data):
         return self.model.score(input_data)
 
-
+def padding(mfcc, max):
+    step_pad = max - mfcc.shape[1]
+    if step_pad >0:
+        return np.pad(mfcc, pad_width=((0,0),(0,step_pad)))
+    else:
+        return mfcc[:,:max]
 
 
 
@@ -49,9 +54,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_folder', help ='source folder')
+    parser.add_argument('--size_max', help ='size of each feauture in MFCC')
     args = parser.parse_args()
     
     input_folder = args.input_folder
+    size_max = int(args.size_max)
 
     for dirname in os.listdir(input_folder):
         # Get the name of the subfolder 
@@ -74,16 +81,25 @@ if __name__ == "__main__":
             filepath = os.path.join(subfolder, filename)
             sampling_freq, audio = librosa.load(filepath)            
             mfcc_features = mfcc(sampling_freq, audio)
-            mfcc_features =mfcc_features.flatten()
-
-            X.append(mfcc_features)
+            #mfcc_features = padding(mfcc_features,max = size_max)
+            mfcc_features = mfcc_features.flatten()
+            mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)[:size_max]
+            
             length.append(len(mfcc_features))
+            #mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)
+            if len(X)== 0:
+                X = mfcc_features
+            else:
+                X=np.concatenate([X,mfcc_features])
+            
         
 
             y_words.append(label)
             filepaths.append(filepath)
-        X=tf.keras.preprocessing.sequence.pad_sequences(X, padding = 'post')
+        #X=tf.keras.preprocessing.sequence.pad_sequences(X,maxlen=200, padding = 'post',truncating='post' )
+
         print('X.shape =', X.shape)
+        print('length.shape =', len(length))
         hmm_trainer = HMMTrainer()
         hmm_trainer.train(X,length)
         hmm_models.append((hmm_trainer, label))
