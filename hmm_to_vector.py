@@ -84,19 +84,19 @@ def acoutic_vectors(input_file, models):
 	"""
 	
 	sampling_freq, audio = librosa.load(input_file)
-
+	labels =  input_file.split('/')[3].strip('\n')
 	        # Extract MFCC features
 	mfcc_features = mfcc(sampling_freq, audio)
 	mfcc_features=mfcc_features[:,:15]
 
             # transform input to vector
 	scores = []
-	for item in models:
-		hmm_model, label = item
-		score = hmm_model.get_score(mfcc_features)
-		scores.append(score)
-	index=np.array(scores).argmax()
-	
+	index = 0
+	for hmm_model, label in models:
+		if labels==label.strip('\n'):
+			break
+		index = index +1
+	    
 	vector = hmm_to_vector(models[index][0].model,mfcc_features)
 	
 	return vector
