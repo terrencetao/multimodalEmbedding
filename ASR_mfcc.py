@@ -10,6 +10,7 @@ from sklearn import preprocessing
 from sklearn.metrics import precision_score
 
 from librosa.feature import mfcc
+from hmm_acoustic import process
 
 
 hyperams ={
@@ -25,39 +26,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--train_folder', help ='folder for training')
     parser.add_argument('--test_file', help ='file containing a list of path to audio test')
-    parser.add_argument('--size_feautres', help ='size of each feauture in MFCC')
+    
     args = parser.parse_args()
 
     test_file = args.test_file
 
     input_folder = args.train_folder
-    #size_max = args.size_features
-    # for dirname in os.listdir(input_folder):
-    #     # Get the name of the subfolder 
-    #   subfolder = os.path.join(input_folder, dirname)
-    #   #print(subfolder)
-    #   label = subfolder[subfolder.rfind('/') + 1:]
-    #   print(label)
-    # filepaths = []
+    
     
     y_words = []
     X_train=[]
+    X = np.array([])
+        
     for dirname in os.listdir(input_folder):
         subfolder = os.path.join(input_folder, dirname)
         if not os.path.isdir(subfolder): 
             continue
         label = subfolder[subfolder.rfind('/') + 1:]
-        X = np.array([])
-        
+       
         for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')][:-1]:
             filepath = os.path.join(subfolder, filename)
-            sampling_freq, audio = librosa.load(filepath)            
-            mfcc_features = mfcc(sampling_freq, audio)
-            mfcc_features = mfcc_features[:,:5]
-            if len(X) == 0:
-                X = mfcc_features
-            else:
-                X = np.append(X, mfcc_features, axis=0) 
+            mfcc_features = process(filepath)
+            # if len(X) == 0:
+            #     X = mfcc_features
+            # else:
+            #     X = np.append(X, mfcc_features, axis=0) 
             X_train.append(mfcc_features.flatten())          
             y_words.append(label)
             
@@ -80,11 +73,9 @@ if __name__ == "__main__":
     X_test = []
     y_test = []
     for input_file in input_files:
-        sampling_freq, audio = librosa.load(input_file)
+        
         y_test.append(input_file.split('/')[2])
-        mfcc_features = mfcc(sampling_freq, audio)
-
-        mfcc_features=mfcc_features[:,:5]
+        mfcc_features=process(input_file)
         X_test.append(mfcc_features.flatten())
 
     y_pred = clf.predict(X_test)

@@ -16,9 +16,14 @@ hyperams ={
 	'input_folder': './hmm-speech-recognition-0.1/audio',
 
 }
+FRAME_SIZE = 512
+HOP_LENGTH = 256
+DURATION = 0.74  # in seconds
+SAMPLE_RATE = 22050
+MONO = True
 
 class HMMTrainer(object):
-    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 3, cov_type='diag', n_iter=1000):
+    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 1, cov_type='diag', n_iter=1000):
         self.model_name = model_name
         self.n_components = n_components
         self.cov_type = cov_type
@@ -41,25 +46,37 @@ class HMMTrainer(object):
     def get_score(self, input_data):
         return self.model.score(input_data)
 
-def padding(mfcc, max):
-    step_pad = max - mfcc.shape[1]
-    if step_pad >0:
-        return np.pad(mfcc, pad_width=((0,0),(0,step_pad)))
+def padding(signal, num_expected_samples ):
+    num_missing_samples = num_expected_samples - len(signal)
+    if num_missing_samples>0:
+        return np.pad(signal,
+                              (num_missing_samples, 0),
+                              mode='constant')
+     
     else:
-        return mfcc[:,:max]
+        return signal[:np.abs(num_expected_samples)]
 
+def process(filepath):
+    size_max = int(SAMPLE_RATE*DURATION)
+    audio, sampling_freq = librosa.load(filepath,sr=SAMPLE_RATE,
+                              duration=DURATION) 
+    audio = padding(signal =audio, num_expected_samples=size_max)           
+    mfcc_features = mfcc(audio, sr=sampling_freq, n_fft=FRAME_SIZE,
+                            hop_length=HOP_LENGTH)
 
+    return mfcc_features
 
 if __name__ == "__main__":
+   
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_folder', help ='source folder')
-    parser.add_argument('--size_max', help ='size of each feauture in MFCC')
+   
     args = parser.parse_args()
     
     input_folder = args.input_folder
-    size_max = int(args.size_max)
-
+    
+    
     for dirname in os.listdir(input_folder):
         # Get the name of the subfolder 
       subfolder = os.path.join(input_folder, dirname)
@@ -79,14 +96,11 @@ if __name__ == "__main__":
         X=[]
         for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')][:-1]:
             filepath = os.path.join(subfolder, filename)
-            sampling_freq, audio = librosa.load(filepath)            
-            mfcc_features = mfcc(sampling_freq, audio)
-            #mfcc_features = padding(mfcc_features,max = size_max)
-            mfcc_features = mfcc_features.flatten()
-            mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)[:size_max]
-            
+                       
+            mfcc_features = process(filepath)
+           
             length.append(len(mfcc_features))
-            #mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)
+            
             if len(X)== 0:
                 X = mfcc_features
             else:
@@ -96,7 +110,7 @@ if __name__ == "__main__":
 
             y_words.append(label)
             filepaths.append(filepath)
-        #X=tf.keras.preprocessing.sequence.pad_sequences(X,maxlen=200, padding = 'post',truncating='post' )
+        
 
         print('X.shape =', X.shape)
         print('length.shape =', len(length))
