@@ -98,7 +98,7 @@ if __name__ == "__main__":
             filepath = os.path.join(subfolder, filename)
                        
             mfcc_features = process(filepath)
-           
+            mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)
             length.append(len(mfcc_features))
             
             if len(X)== 0:
