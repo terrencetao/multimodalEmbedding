@@ -30,9 +30,9 @@ class HMMTrainer(object):
             raise TypeError('Invalid model type')
 
     # X is a 2D numpy array where each row is 13D
-    def train(self, X):
+    def train(self, X,length):
         np.seterr(all='ignore')
-        self.models.append(self.model.fit(X))
+        self.models.append(self.model.fit(X,length))
 
     # Run the model on input data
     def get_score(self, input_data):
@@ -59,19 +59,23 @@ if __name__ == "__main__":
         X = np.array([])
         y_words = []
         
+        length = []
         for filename in [x for x in os.listdir(subfolder) if x.endswith('.wav')][:-1]:
             filepath = os.path.join(subfolder, filename)
             sampling_freq, audio = librosa.load(filepath)            
             mfcc_features = mfcc(sampling_freq, audio)
+            mfcc_features = mfcc_features[:,:15]
+            #mfcc_features = mfcc_features.reshape(len(mfcc_features),-1)
+            length.append(len(mfcc_features))
             if len(X) == 0:
-                X = mfcc_features[:,:15]
+                X=mfcc_features
             else:
-                X = np.append(X, mfcc_features[:,:15], axis=0)            
+                X= np.concatenate([X,mfcc_features])            
             y_words.append(label)
             filepaths.append(filepath)
         print('X.shape =', X.shape)
         hmm_trainer = HMMTrainer()
-        hmm_trainer.train(X)
+        hmm_trainer.train(X,length)
         hmm_models.append((hmm_trainer, label))
         
 
