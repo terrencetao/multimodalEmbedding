@@ -61,7 +61,7 @@ def process(filepath):
     audio, sampling_freq = librosa.load(filepath,sr=SAMPLE_RATE,
                               duration=DURATION) 
     audio = padding(signal =audio, num_expected_samples=size_max)           
-    mfcc_features = mfcc(audio, sr=sampling_freq, n_fft=FRAME_SIZE,
+    mfcc_features = mfcc(y=audio, sr=sampling_freq, n_fft=FRAME_SIZE,
                             hop_length=HOP_LENGTH)
 
     return mfcc_features
@@ -112,8 +112,9 @@ if __name__ == "__main__":
             filepaths.append(filepath)
         
 
-        print('X.shape =', X.shape)
-        print('length.shape =', len(length))
+        print('X.shape -->', X.shape)
+        print('length.shape -->', len(length))
+        print('label -->',label)
         hmm_trainer = HMMTrainer()
         hmm_trainer.train(X,length)
         hmm_models.append((hmm_trainer, label))

@@ -90,15 +90,15 @@ def acoutic_vectors(input_file, models):
 	scores = []
 	index =0
 	for hmm_model,label in models:
-		# # try:
-		# # 	score = hmm_model.get_score(mfcc_features)
-			
-		# # except:
-		# # 	continue
-		# scores.append(score)
-		if labels == label.strip('\n'):
-			break
-	#index=np.array(scores).argmax()
+		try:
+			score = hmm_model.get_score(mfcc_features)
+		except:
+			continue
+		
+		scores.append(score)
+		# if labels == label.strip('\n'):
+		# 	break
+	index=np.array(scores).argmax()
 	
 	vector = hmm_to_vector(models[index][0].model,mfcc_features)
 	
