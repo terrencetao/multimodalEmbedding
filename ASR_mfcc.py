@@ -7,7 +7,7 @@ import librosa
 from sklearn import svm
 import json
 from sklearn import preprocessing
-from sklearn.metrics import precision_score
+from sklearn.metrics import precision_score, classification_report
 
 from librosa.feature import mfcc
 from hmm_acoustic import process
@@ -86,4 +86,6 @@ if __name__ == "__main__":
     y_true = le.transform(y_test)
     y_view = le.transform(y_pred)
     print(precision_score(y_true=y_true, y_pred=y_view,average='macro'))
+    print(classification_report(y_true, y_view, target_names=['0','1','2','3','4','5','6','7','8','9']))
+    
     
