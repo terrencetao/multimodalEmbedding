@@ -60,7 +60,7 @@ def process(filepath):
     audio, sampling_freq = librosa.load(filepath,sr=SAMPLE_RATE,
                               duration=DURATION) 
     audio = padding(signal =audio, num_expected_samples=size_max)           
-    mfcc_features = mfcc(audio, sr=sampling_freq, n_fft=FRAME_SIZE,
+    mfcc_features = mfcc(y=audio, sr=sampling_freq, n_fft=FRAME_SIZE,
                             hop_length=HOP_LENGTH)
 
     return mfcc_features
