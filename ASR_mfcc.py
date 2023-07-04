@@ -74,7 +74,7 @@ if __name__ == "__main__":
     y_test = []
     for input_file in input_files:
         
-        y_test.append(input_file.split('/')[2])
+        y_test.append(input_file.split('/')[4])
         mfcc_features=process(input_file)
         X_test.append(mfcc_features.flatten())
 

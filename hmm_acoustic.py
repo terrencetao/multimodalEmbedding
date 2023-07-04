@@ -9,7 +9,6 @@ import argparse
 import tqdm as tqdm
 
 from librosa.feature import mfcc
-import tensorflow as tf
 
 hyperams ={
 	
@@ -23,7 +22,7 @@ SAMPLE_RATE = 22050
 MONO = True
 
 class HMMTrainer(object):
-    def __init__(self, model_name='GMMHMM', n_components=5, n_mix = 6, cov_type='diag', n_iter=1000):
+    def __init__(self, model_name='GMMHMM', n_components=4, n_mix = 2, cov_type='diag', n_iter=1000):
         self.model_name = model_name
         self.n_components = n_components
         self.cov_type = cov_type
