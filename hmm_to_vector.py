@@ -85,6 +85,7 @@ def acoutic_vectors(input_file, models):
 	
 	          
 	mfcc_features = process(input_file)
+	mfcc_features = mfcc_features.reshape((len(mfcc_features)*mfcc_features.shape[1]),1)
             # transform input to vector
 	labels = input_file.split('/')[4].strip('\n')
 	scores = []
