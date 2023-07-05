@@ -151,7 +151,7 @@ if __name__ == "__main__":
 		ifi =input_file.split('/')
 		print(type(vector))
 		mat_vectors[os.path.join(ifi[4],ifi[5])]= vector
-	
+	print(mat_vectors)
 	# Serialization
 	with open(output_file, "w") as outfile:
 		json.dump(mat_vectors, outfile,indent=4)
