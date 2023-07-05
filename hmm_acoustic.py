@@ -36,8 +36,8 @@ class HMMTrainer(object):
                                     [0, tmp_p, tmp_p, tmp_p , 0], 
                                       [0, 0, tmp_p, tmp_p,tmp_p], 
                                        [0, 0, 0, 0.5, 0.5], 
-                                       [0, 0, 0, 0, 1]],dtype=np.float)
-            startprobPrior = np.array([0.5, 0.5, 0, 0, 0],dtype=np.float)
+                                       [0, 0, 0, 0, 1]],dtype=float)
+            startprobPrior = np.array([0.5, 0.5, 0, 0, 0],dtype=float)
             self.model = hmm.GMMHMM(n_components=self.n_components, n_mix=self.n_mix, transmat_prior=transmatPrior, 
                                     startprob_prior=startprobPrior,
                     covariance_type=self.cov_type, n_iter=self.n_iter)
