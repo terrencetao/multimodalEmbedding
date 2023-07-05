@@ -153,5 +153,5 @@ if __name__ == "__main__":
 	
 	# Serialization
 	with open(output_file, "w") as outfile:
-		json.dump(mat_vectors, outfile.tolist(),indent=4)
+		json.dump(mat_vectors.tolist(), outfile,indent=4)
 	      
