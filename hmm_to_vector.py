@@ -149,7 +149,7 @@ if __name__ == "__main__":
 	
 		#  the name for the vector is item/item.wav this is for easier dataset contruction for ASR model svm
 		ifi =input_file.split('/')
-		mat_vectors[os.path.join(ifi[4],ifi[5])]= vector.tolist()
+		mat_vectors[os.path.join(ifi[4],ifi[5])]= vector
 	
 	# Serialization
 	with open(output_file, "w") as outfile:
