@@ -31,8 +31,17 @@ class HMMTrainer(object):
         self.models = []
 
         if self.model_name == 'GMMHMM':
-            self.model = hmm.GMMHMM(n_components=self.n_components, n_mix=self.n_mix,
+            tmp_p = 1.0/(self.n_components-2)
+            transmatPrior = np.array([[tmp_p, tmp_p, tmp_p, 0 ,0], 
+                                    [0, tmp_p, tmp_p, tmp_p , 0], 
+                                      [0, 0, tmp_p, tmp_p,tmp_p], 
+                                       [0, 0, 0, 0.5, 0.5], 
+                                       [0, 0, 0, 0, 1]],dtype=np.float)
+            startprobPrior = np.array([0.5, 0.5, 0, 0, 0],dtype=np.float)
+            self.model = hmm.GMMHMM(n_components=self.n_components, n_mix=self.n_mix, transmat_prior=transmatPrior, 
+                                    startprob_prior=startprobPrior,
                     covariance_type=self.cov_type, n_iter=self.n_iter)
+            
         else:
             raise TypeError('Invalid model type')
 
