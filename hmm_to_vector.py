@@ -90,7 +90,7 @@ def acoutic_vectors(input_file, models):
 	labels = input_file.split('/')[4].strip('\n')
 	scores = []
 	index =0
-	print(labels)
+	
 	for hmm_model,label in models:
 		try:
 			score = hmm_model.get_score(mfcc_features)
@@ -150,7 +150,6 @@ if __name__ == "__main__":
 	
 		#  the name for the vector is item/item.wav this is for easier dataset contruction for ASR model svm
 		ifi =input_file.split('/')
-		print(type(vector))
 		mat_vectors[os.path.join(ifi[4],ifi[5])]= vector
 	
 	# Serialization
