@@ -103,7 +103,7 @@ def acoutic_vectors(input_file, models):
 	try:
 		vector = hmm_to_vector(models[index][0].model,mfcc_features)
 	except:
-		pass
+		vector =[]
 	
 	return vector
 
