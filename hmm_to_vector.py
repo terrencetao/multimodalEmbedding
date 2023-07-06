@@ -100,8 +100,10 @@ def acoutic_vectors(input_file, models):
 		# if labels == label.strip('\n'):
 		# 	break
 	index=np.array(scores).argmax()
-	
-	vector = hmm_to_vector(models[index][0].model,mfcc_features)
+	try:
+		vector = hmm_to_vector(models[index][0].model,mfcc_features)
+	except:
+		pass
 	
 	return vector
 

@@ -24,9 +24,10 @@ with open(test_file) as mon_fichier:
 
 y_train = list(data_train.keys())
 X_train = list(data_train.values())
-print('shape:', len(X_train[1]))
+print('shape trainning:', len(X_train))
 y_test = list(data_test.keys())
 X_test = list(data_test.values())
+print('shape test:', len(X_test))
 
 Y = []
 for y in y_train:
@@ -45,8 +46,8 @@ clf.fit(X_train, Y)
 
 y_pred = clf.predict(X_test)
 y_view = le.transform(y_pred)
-# print(y_view)
-# print(Yt)
+print(y_view)
+print(Yt)
 print(classification_report(y_true, y_view, target_names=le.classes_))
 print(accuracy_score(y_true, y_view))
 print(precision_score(y_true=y_true, y_pred=y_view,average='macro'))
