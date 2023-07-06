@@ -44,10 +44,9 @@ clf = clf = svm.SVC()
 clf.fit(X_train, Y)
 
 y_pred = clf.predict(X_test)
+
 y_view = y_pred
-print(y_test)
-print(y_view)
-print(Yt)
+
 print(classification_report(y_true, y_view, target_names=['0','1','2','3','4','5','6','7','8','9']))
 print(accuracy_score(y_true, y_view))
 print(precision_score(y_true=y_true, y_pred=y_view,average='macro'))
