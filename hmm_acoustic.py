@@ -10,7 +10,7 @@ import tqdm as tqdm
 
 
 from librosa.feature import mfcc
-
+import shutil
 hyperams ={
 	
 	'input_folder': './hmm-speech-recognition-0.1/audio',
