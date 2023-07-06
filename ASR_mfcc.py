@@ -77,7 +77,7 @@ if __name__ == "__main__":
         y_test.append(input_file.split('/')[2])
         mfcc_features=process(input_file)
         X_test.append(mfcc_features.flatten())
-    print('shape test', len(len(X_test))
+    print('shape test', len(len(X_test)))
     y_pred = clf.predict(X_test)
     
     
