@@ -8,8 +8,8 @@ import librosa
 import argparse 
 import tqdm as tqdm
 
+
 from librosa.feature import mfcc
-import tensorflow as tf
 
 hyperams ={
 	
@@ -22,8 +22,19 @@ DURATION = 0.74  # in seconds
 SAMPLE_RATE = 22050
 MONO = True
 
+def recreate_dir(folder):
+	"""
+	   input :
+	        folder: path to create
+	  purpose : create folder or recreate if exist
+	"""
+	if os.path.exists(folder):
+		shutil.rmtree(folder, ignore_errors=True)
+	
+	os.makedirs(folder)
+        
 class HMMTrainer(object):
-    def __init__(self, model_name='GMMHMM', n_components=5, n_mix = 6, cov_type='diag', n_iter=1000):
+    def __init__(self, model_name='GMMHMM', n_components=5, n_mix = 1, cov_type='diag', n_iter=1000):
         self.model_name = model_name
         self.n_components = n_components
         self.cov_type = cov_type
@@ -32,8 +43,17 @@ class HMMTrainer(object):
         self.models = []
 
         if self.model_name == 'GMMHMM':
-            self.model = hmm.GMMHMM(n_components=self.n_components, n_mix=self.n_mix,
+            tmp_p = 1.0/(self.n_components-2)
+            transmatPrior = np.array([[tmp_p, tmp_p, tmp_p, 0 ,0], 
+                                    [0, tmp_p, tmp_p, tmp_p , 0], 
+                                      [0, 0, tmp_p, tmp_p,tmp_p], 
+                                       [0, 0, 0, 0.5, 0.5], 
+                                       [0, 0, 0, 0, 1]],dtype=float)
+            startprobPrior = np.array([0.5, 0.5, 0, 0, 0],dtype=float)
+            self.model = hmm.GMMHMM(n_components=self.n_components, n_mix=self.n_mix, transmat_prior=transmatPrior, 
+                                    startprob_prior=startprobPrior,
                     covariance_type=self.cov_type, n_iter=self.n_iter)
+            
         else:
             raise TypeError('Invalid model type')
 
@@ -98,7 +118,7 @@ if __name__ == "__main__":
             filepath = os.path.join(subfolder, filename)
                        
             mfcc_features = process(filepath)
-            mfcc_features = mfcc_features.reshape(len(mfcc_features)*mfcc_features.shape[1],1)
+            mfcc_features = mfcc_features.reshape((len(mfcc_features)*mfcc_features.shape[1]),1)
             length.append(len(mfcc_features))
             
             if len(X)== 0:
@@ -112,15 +132,15 @@ if __name__ == "__main__":
             filepaths.append(filepath)
         
 
-        print('X.shape -->', X.shape)
-        print('length.shape -->', len(length))
-        print('label -->',label)
+        print('X.shape =', X.shape)
+        print('length.shape =', len(length))
         hmm_trainer = HMMTrainer()
         hmm_trainer.train(X,length)
         hmm_models.append((hmm_trainer, label))
         
 
 	# save model
+    recreate_dir('HMMs')
     for item in hmm_models:
         hmm_model, label = item
         with open(os.path.join('HMMs',label + ".pkl"), "wb") as file: 
